@@ -5,14 +5,12 @@ import { FiSearch } from "react-icons/fi";
 import { SlCalender } from "react-icons/sl";
 import { useState } from "react";
 import { useHeader } from "../HeaderContext";
-const Header = ({
-  onSearchToggle,
-  searchTerm,
-  setSearchTerm,
-  searchVisible,
-  setSelectedDate, // New prop for selecting date
-}) => {
+import { useDateSearch } from "../DateSearchContext";
+const Header = () => {
+  const { searchTerm, selectedDate, updateSearchTerm, updateSelectedDate } =
+    useDateSearch();
   const [calendarVisible, setCalendarVisible] = useState(false); // Toggle calendar visibility
+  const [searchVisible, setSearchVisible] = useState(false);
   const { headerContent } = useHeader();
   const headerStyle = {
     display: "flex",
@@ -30,20 +28,24 @@ const Header = ({
     alignItems: "center",
     justifyContent: "center",
     maxGap: "7px",
-    fontWeight: "700",
+    fontWeight: "600",
   };
 
   const iconContainerStyle = {
     display: "flex",
-    alignItems: "center",
-    gap: "20px",
+    alignItems: "flex-end",
+    gap: "25px",
     justifyContent: "center",
   };
-
+  const iconStyle1 = {
+    fontSize: "22px",
+    cursor: "pointer",
+    paddingRight: "15px",
+  };
   const iconStyle = {
     fontSize: "30px",
     cursor: "pointer",
-    paddingRight: "10px",
+    paddingRight: "0px",
   };
 
   const searchInputStyle = {
@@ -52,48 +54,46 @@ const Header = ({
     opacity: 1, // Fade in/out animation
     padding: "5px",
     marginLeft: "0px",
-    border: "1px solid #ccc",
+    // border: "1px solid #ccc",
     borderRadius: "5px",
-    marginBottom: "2px",
   };
-
-  const handleDateChange = (e) => {
-    const selectedDate = e.target.value;
-    setSelectedDate(selectedDate); // Set the selected date in the parent component
+  const formatDate = (dateString) => {
+    const [day, month, year] = dateString.split("/");
+    // Split by "/"
+    console.log("", day, month, year);
+    return `${year}-${month}-${day}`; // Return in "yyyy-mm-dd" format
   };
 
   return (
     <header style={headerStyle}>
       <div style={titleStyle}>
-        {headerContent.icon && ( 
-          
+        {headerContent.icon && (
           <span
-            style={iconStyle}
+            style={iconStyle1}
             onClick={() => {}}
             data-tooltip-id="back-to-active"
             data-tooltip-content="back"
           >
             {headerContent.icon}
-          
           </span>
-          
         )}
-          <ReactTooltip
-              id="back-to-active"
-              place="bottom"
-              effect="solid"
-              type="info"
-              fontSize={"8px"}
-            />
-        <h1>{headerContent.heading}</h1>
+        <ReactTooltip
+          id="back-to-active"
+          place="bottom"
+          effect="solid"
+          type="info"
+        />
+        <h1 style={{ fontSize: "24px" }}>{headerContent.heading}</h1>
       </div>
       {(headerContent.heading === "TODO APP" ||
         headerContent.heading === "Completed Tasks") && (
         <div style={iconContainerStyle}>
-          <div style={{ display: "flex", alignItems: "center", gap: ".75rem" }}>
+          <div
+            style={{ display: "flex", alignItems: "flex-start", gap: ".75rem" }}
+          >
             <FiSearch
               style={iconStyle}
-              onClick={onSearchToggle}
+              onClick={() => setSearchVisible(!searchVisible)}
               data-tooltip-id="search"
               data-tooltip-content="search by title"
             />
@@ -103,71 +103,49 @@ const Header = ({
                 type="text"
                 placeholder="Search by title"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)} // Update search term
+                onChange={(e) => updateSearchTerm(e.target.value)} // Update search term
+                onFocus={{ border: "none" }}
               />
             )}
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: ".75rem" }}>
+          <div
+            style={{ display: "flex", alignItems: "flex-start", gap: ".75rem" }}
+          >
+            <ReactTooltip
+              id="search"
+              place="bottom"
+              effect="solid"
+              type="info"
+            />
             <SlCalender
               style={iconStyle}
               onClick={() => setCalendarVisible(!calendarVisible)}
               data-tooltip-id="search"
               data-tooltip-content="search by date"
             />
+
             {calendarVisible && (
               <input
                 type="date"
-                onChange={handleDateChange}
+                value={formatDate(selectedDate)}
+                onChange={(e) => updateSelectedDate(e.target.value)}
+                onFocus={{ border: "none !important" }}
                 style={{
                   transition: "width 0.3s ease, opacity 0.3s ease",
                   width: "8rem", // Animation width change
                   opacity: 1, // Fade in/out animation
                   padding: "5px",
                   marginLeft: "0px",
-                  border: "1px solid #ccc",
+                  border: "none",
                   borderRadius: "5px",
-                  marginBottom: "2px",
                 }}
               />
             )}
-            <ReactTooltip
-              id="search"
-              place="bottom"
-              effect="solid"
-              type="info"
-              fontSize={"8px"}
-            />
           </div>
         </div>
       )}
 
       {/* Media Query Styles */}
-      <style>{`
-        @media screen and (max-width: 485px) {
-          header {
-            padding: 10px 8px;
-          }
-          h1 {
-            font-size: 14px;
-          }
-          .icon-container {
-            gap: 5px;
-          }
-          .icon {
-            font-size: 10px;
-          }
-            .searchInputStyle{ width: 2rem;
-            font-size: 10px;
-            }
-          input {
-            width: 2rem;
-            font-size: 10px;
-          }
-        } 
-           .titleStyle{
-            gap: 5px;
-            flexDirection: column;}
-      `}</style>
     </header>
   );
 };

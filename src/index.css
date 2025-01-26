@@ -1,12 +1,56 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"); 
+@import url("https://fonts.googleapis.com/css?family=Jost:100,200,300,regular,500,600,700,800,900,100italic,200italic,300italic,italic,500italic,600italic,700italic,800italic,900italic");
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Inter", serif;
+
+  font-family: "Jost", serif;
 }
 body,
 html {
   min-height: 100vh;
   min-width: 100%;
+}
+/* Global CSS file or within <style> tag */
+[data-tooltip-id]:focus {
+  outline: none !important;
+}
+/* Universal scrollbar styling */
+/* WebKit browsers (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #4a4c8d; /* Default thumb color */
+  border-radius: 50%; /* Rounded edges for the scrollbar thumb */
+  transition: background-color 0.3s ease; /* Smooth transition on hover */
+  cursor: pointer; /* Pointer cursor on hover */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #101020; /* Lighter color on hover */
+}
+
+::-webkit-scrollbar-track {
+  background: none; /* Transparent track */
+  border-radius: 10px; /* Rounded edges for track */
+}
+
+/* Firefox-specific styles */
+* {
+  scrollbar-width: thin; /* Thin scrollbar */
+  scrollbar-color: #4a4c8d transparent; /* Thumb color and transparent track */
+}
+
+*::-moz-scrollbar-thumb {
+  background-color: #4a4c8d; /* Default thumb color */
+  border-radius: 10px; /* Rounded edges for Firefox scrollbar thumb */
+  transition: background-color 0.3s ease; /* Smooth hover effect */
+}
+
+*::-moz-scrollbar-thumb:hover {
+  background-color: #6a6ccf; /* Lighter color on hover */
+  cursor: pointer; /* Pointer cursor on hover */
 }

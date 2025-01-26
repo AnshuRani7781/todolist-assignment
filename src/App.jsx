@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Header from "./components/Header";
 import TodoBody from "./components/TodoBody";
 import { HeaderProvider } from "./HeaderContext";
+import { DateSearchProvider } from "./DateSearchContext";
 function App() {
   // const [headerContent, setHeaderContent] = useState({
   //   title: "TODO APP",
@@ -30,17 +31,19 @@ function App() {
           width: "100%",
         }}
       >
-        <HeaderProvider>
-          <Header
-            searchVisible={searchVisible}
-            onSearchToggle={toggleSearch}
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            selectedDate={selectedDate}
-            setSelectedDate={setSelectedDate}
-          />
-          <TodoBody selectedDate={selectedDate} searchTerm={searchTerm} />
-        </HeaderProvider>
+        <DateSearchProvider>
+          <HeaderProvider>
+            <Header
+              searchVisible={searchVisible}
+              onSearchToggle={toggleSearch}
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              selectedDate={selectedDate}
+              setSelectedDate={setSelectedDate}
+            />
+            <TodoBody selectedDate={selectedDate} searchTerm={searchTerm} />
+          </HeaderProvider>
+        </DateSearchProvider>
       </div>
     </>
   );

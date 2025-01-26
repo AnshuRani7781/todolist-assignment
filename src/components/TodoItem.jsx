@@ -7,132 +7,147 @@ import { IoMdArrowDropupCircle } from "react-icons/io";
 
 const TodoItem = ({
   title,
-  subtitle = "", // Default to empty string if subtitle is undefined
-  detail = "", // Default to empty string if detail is undefined
+  subtitle = "",
+  detail = "",
   onEdit,
   onDelete,
   onComplete,
   completed,
   date,
 }) => {
-  const [showDetail, setShowDetail] = useState(false); // State to toggle detail view
-  const [isMobile, setIsMobile] = useState(false); // State to track if screen is mobile
+  const [screenSize, setScreenSize] = useState("large"); // Track screen size: 'small', 'medium', 'large'
+  const [showDetail, setShowDetail] = useState(false); // Track whether to show detail or subtitle
 
-  // Check window width and set isMobile to true if <= 450px
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 450); // Update isMobile state on resize
+      const width = window.innerWidth;
+      if (width <= 400) {
+        setScreenSize("small");
+      } else if (width <= 1024) {
+        setScreenSize("medium");
+      } else {
+        setScreenSize("large");
+      }
     };
 
-    handleResize(); // Initialize the value on mount
-    window.addEventListener("resize", handleResize); // Add event listener to handle resize
-
-    return () => {
-      window.removeEventListener("resize", handleResize); // Cleanup on unmount
-    };
+    handleResize(); // Initialize the screen size on mount
+    window.addEventListener("resize", handleResize); // Listen for resize events
+    return () => window.removeEventListener("resize", handleResize); // Cleanup on unmount
   }, []);
 
   const itemStyle = {
     maxWidth: "100%",
     display: "flex",
-    flexDirection: isMobile ? "column" : "row", // Change direction based on screen width
+    flexDirection: screenSize === "small" ? "column" : "row",
     justifyContent: "space-between",
-    alignItems: "center",
-    padding: isMobile ? "10px" : "20px", // Adjust padding for smaller screens
-    margin: "10px 0",
+    alignItems: screenSize === "small" ? "flexStart" : "center",
+    padding:
+      screenSize === "small"
+        ? "15px"
+        : screenSize === "medium"
+        ? "15px"
+        : "20px",
+    margin: "9px 0",
     backgroundColor: "white",
-    color: "#9395D3", // Text color
+    color: "#9395D3",
     borderRadius: "15px",
-    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-    textDecoration: "none", // No strike-through for completed
-    marginBottom: "20px",
-    wordWrap: "break-word", // Ensure text wraps inside container
-    overflowWrap: "break-word", // Ensure text breaks properly
-    width: "100%", // Allow the item to take full width of parent
-    flexWrap: "wrap", // Allow wrapping of content
+    boxShadow: "0px 4px 4px 0px #00000040",
+    wordWrap: "break-word",
+    overflowWrap: "break-word",
+    width: "100%",
+    flexWrap: "wrap",
+    marginBottom: "17px",
   };
 
   const textContainerStyle = {
     display: "flex",
-    flexDirection: "column", // Stack title, subtitle, and detail vertically
-    maxWidth: isMobile ? "90%" : "70%", // Change max width based on screen width
-    overflow: "hidden", // Hide overflow content
-    textOverflow: "ellipsis", // Add ellipsis for overflowing text
+    flexDirection: "column",
+    maxWidth:
+      screenSize === "small" ? "90%" : screenSize === "medium" ? "40%" : "70%",
+
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+  };
+
+  const buttonStyle = {
+    padding: "5px 10px",
+    fontSize: "20px",
+    cursor: "pointer",
+    border: "none",
+    borderRadius: "5px",
+    backgroundColor: "white",
+    color: "#B3B7EE",
   };
 
   return (
     <div style={itemStyle}>
       <div style={textContainerStyle}>
-        <h3 style={{ fontSize: "24px", margin: 0 }}>{title}</h3>
-        <p style={{ color: "#A7A7A7", fontSize: "8px", marginBottom: "" }}>
+        <h3
+          style={{
+            fontSize: screenSize === "small" ? "17px" : "22px", // Adjust title font size for small screens
+            margin: 0,
+          }}
+        >
+          {title}
+        </h3>
+        <p
+          style={{
+            color: "#A7A7A7",
+            fontSize: screenSize === "small" ? "10px" : "12px", // Adjust date font size for small screens
+            marginBottom: "",
+          }}
+        >
           {date}
         </p>
-        <p style={{ color: "black", marginTop: ".75rem", fontSize: "12px" }}>
+
+        <p
+          style={{
+            color: "black",
+            marginTop: screenSize === "small" ? "1rem" : ".75rem",
+            fontSize: "14px",
+          }}
+        >
           {showDetail ? detail : subtitle}
         </p>
       </div>
       <div style={{ display: "flex", gap: "10px" }}>
         {detail.length > subtitle.length && (
           <button
-            style={{
-              padding: "5px 10px",
-              fontSize: "20px",
-              cursor: "pointer",
-              border: "none",
-              borderRadius: "5px",
-              backgroundColor: "white",
-              color: "#B3B7EE",
-            }}
+            style={buttonStyle}
             onClick={() => setShowDetail((prev) => !prev)}
+            aria-label="Toggle details"
+            title="Toggle details"
           >
             {showDetail ? (
-              <IoMdArrowDropdownCircle />
-            ) : (
               <IoMdArrowDropupCircle />
+            ) : (
+              <IoMdArrowDropdownCircle />
             )}
           </button>
         )}
         {!completed && (
           <>
             <button
-              style={{
-                padding: "5px 10px",
-                fontSize: "20px",
-                cursor: "pointer",
-                border: "none",
-                borderRadius: "5px",
-                backgroundColor: "white",
-                color: "#B3B7EE",
-              }}
+              style={buttonStyle}
               onClick={onComplete}
+              aria-label="Mark as complete"
+              title="Mark as complete"
             >
               <BiCheckCircle />
             </button>
             <button
-              style={{
-                padding: "5px 10px",
-                fontSize: "20px",
-                cursor: "pointer",
-                border: "none",
-                borderRadius: "5px",
-                backgroundColor: "white",
-                color: "#B3B7EE",
-              }}
+              style={buttonStyle}
               onClick={onEdit}
+              aria-label="Edit task"
+              title="Edit task"
             >
               <FiEdit2 />
             </button>
             <button
-              style={{
-                padding: "5px 10px",
-                fontSize: "20px",
-                cursor: "pointer",
-                border: "none",
-                borderRadius: "5px",
-                backgroundColor: "white",
-                color: "#B3B7EE",
-              }}
+              style={buttonStyle}
               onClick={onDelete}
+              aria-label="Delete task"
+              title="Delete task"
             >
               <RiDeleteBin5Line />
             </button>

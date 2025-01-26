@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
-
+import { useDateSearch } from "../DateSearchContext";
 const AddTodoForm = ({ onCancel, onSubmit }) => {
+  const { searchTerm, selectedDate, updateSearchTerm, updateSelectedDate } =
+    useDateSearch();
+  useEffect(() => {
+    updateSearchTerm("");
+    updateSelectedDate("");
+  });
   const [formData, setFormData] = useState({
     title: "",
     detail: "",
@@ -13,7 +19,11 @@ const AddTodoForm = ({ onCancel, onSubmit }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === "date") {
+    if (name === "title") {
+      // Remove leading/trailing spaces and enforce length limit
+      const trimmedValue = value.trimStart().slice(0, 35);
+      setFormData({ ...formData, [name]: trimmedValue });
+    } else if (name === "date") {
       const [year, month, day] = value.split("-");
       setFormData({ ...formData, [name]: `${day}/${month}/${year}` });
     } else if (name === "detail") {
@@ -36,7 +46,6 @@ const AddTodoForm = ({ onCancel, onSubmit }) => {
     if (onCancel) onCancel();
   };
 
-  // Function to check form validity
   const checkFormValidity = () => {
     const { title, detail, date } = formData;
     if (title && title.length <= 35 && detail && date) {
@@ -48,7 +57,7 @@ const AddTodoForm = ({ onCancel, onSubmit }) => {
 
   useEffect(() => {
     checkFormValidity();
-  }, [formData.title, formData.detail, formData.date]); // Recheck validation on each change
+  }, [formData.title, formData.detail, formData.date]);
 
   return (
     <div
@@ -67,14 +76,14 @@ const AddTodoForm = ({ onCancel, onSubmit }) => {
           name="title"
           value={formData.title}
           onChange={handleChange}
-          placeholder="Title"
+          placeholder="Title (max 35 characters)"
           maxLength="35"
           style={{
             color: "black",
             width: "100%",
             border: "none",
-            borderBottom: "2px solid #8B8787",
-            padding: "10px",
+            borderBottom: "1px solid #8B8787",
+            padding: "10px 0",
             fontSize: "16px",
             marginBottom: "30px",
           }}
@@ -86,7 +95,9 @@ const AddTodoForm = ({ onCancel, onSubmit }) => {
             color: formData.title.length > 35 ? "red" : "#8b8787",
           }}
         >
-          {formData.title.length > 35 ? "Title cannot exceed 35 characters" : ""}
+          {formData.title.length > 35
+            ? "Title cannot exceed 35 characters"
+            : ""}
         </span>
 
         {/* Detail Field */}
@@ -99,29 +110,37 @@ const AddTodoForm = ({ onCancel, onSubmit }) => {
           onChange={handleChange}
           style={{
             color: "black",
+            padding: "10px 0",
             width: "100%",
             border: "none",
-            borderBottom: "2px solid #8B8787",
-            padding: "10px",
+            borderBottom: "1px solid #8B8787",
+
             fontSize: "16px",
             marginBottom: "30px",
           }}
+          required
         />
 
         {/* Date Field */}
         <input
-          type="date"
-          id="date"
+          placeholder="Date"
+          className="textbox-n"
+          type="text"
           name="date"
+          onFocus={(e) => {
+            e.target.type = "date";
+            e.target.style.color = "black";
+          }}
+          onBlur={(e) => (e.target.type = "text")}
+          id="date"
           onChange={handleChange}
           style={{
-            cursor: "pointer",
             width: "100%",
-            padding: "10px",
+            padding: "10px 0",
             color: "#8b8787",
             fontSize: "16px",
             border: "none",
-            borderBottom: "2px solid #8B8787",
+            borderBottom: "1px solid #8B8787",
             marginBottom: "30px",
             boxShadow: "none",
           }}
@@ -137,31 +156,26 @@ const AddTodoForm = ({ onCancel, onSubmit }) => {
             fontSize: "16px",
             fontWeight: "bold",
             color: "#fff",
-            backgroundColor: "#9395D3",
+            backgroundColor: isValid ? "#9395D3" : "#D3D3D3",
             border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
+            borderRadius: "15px",
+            cursor: isValid ? "pointer" : "not-allowed",
             transition: "background-color 0.3s",
+            boxShadow: "0px 4px 4px 0px #00000040",
           }}
-          onMouseEnter={(e) => (e.target.style.backgroundColor = "#4c3bc0")}
-          onMouseLeave={(e) => (e.target.style.backgroundColor = "#9395D3")}
+          onMouseEnter={(e) =>
+            isValid && (e.target.style.backgroundColor = "#4A4C8D")
+          }
+          onMouseLeave={(e) =>
+            isValid && (e.target.style.backgroundColor = "#4A4C8D")
+          }
           disabled={!isValid} // Disable button if form is not valid
         >
           ADD
         </button>
       </form>
       <style>
-        {` 
-          input[type="date"]::-webkit-input-placeholder {
-            color: #8b8787; /* Placeholder color */
-          }
-          input[type="date"]::-moz-placeholder {
-            color: #8b8787; /* Firefox placeholder color */
-          }
-          input[type="date"]:-ms-input-placeholder {
-            color: #8b8787; /* Internet Explorer/Edge placeholder color */
-          }
-
+        {`
           input::placeholder {
             color: #8B8787; /* Placeholder text color */
           }
@@ -171,7 +185,11 @@ const AddTodoForm = ({ onCancel, onSubmit }) => {
             border-bottom: 3px solid #8B8787; /* Maintain consistent bottom border on focus */
             outline: none; /* Remove browser focus outline */
             color: black; /* Ensure text remains black */
-          } 
+          }
+
+          input[type="date"]::-webkit-calendar-picker-indicator {
+            cursor: pointer; /* Make the date picker indicator clickable */
+          }
         `}
       </style>
     </div>

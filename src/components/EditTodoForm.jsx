@@ -47,8 +47,8 @@ const EditTodoForm = ({ todo, onCancel, onUpdate }) => {
             color: "black",
             width: "100%",
             border: "none",
-            borderBottom: "2px solid #8B8787",
-            padding: "10px",
+            borderBottom: "1px solid #8B8787",
+            padding: "10px 0",
             fontSize: "16px",
             marginBottom: "30px",
           }}
@@ -66,25 +66,32 @@ const EditTodoForm = ({ todo, onCancel, onUpdate }) => {
             color: "black",
             width: "100%",
             border: "none",
-            borderBottom: "2px solid #8B8787",
-            padding: "10px",
+            borderBottom: "1px solid #8B8787",
+            padding: "10px 0",
             fontSize: "16px",
             marginBottom: "30px",
           }}
         />
         <input
-          type="date"
-          id="date"
+          placeholder={date}
+          type="text"
           name="date"
+          color="black"
+          onFocus={(e) => {
+            e.target.type = "date";
+            e.target.style.color = "black";
+          }}
+          onBlur={(e) => (e.target.type = "text")}
+          id="date "
           onChange={(e) => setDate(e.target.value)}
           style={{
             cursor: "pointer",
             width: "100%",
-            padding: "10px",
+            padding: "10px 0",
             value: { date },
             fontSize: "16px",
             border: "none",
-            borderBottom: "2px solid #8B8787",
+            borderBottom: "1px solid #8B8787",
             marginBottom: "30px",
             boxShadow: "none",
           }}
@@ -104,6 +111,7 @@ const EditTodoForm = ({ todo, onCancel, onUpdate }) => {
               borderRadius: "15px",
               cursor: "pointer",
               transition: "background-color 0.3s",
+              boxShadow: "0px 4px 4px 0px #00000040",
             }}
             onMouseEnter={(e) => (e.target.style.backgroundColor = "#4c3bc0")}
             onMouseLeave={(e) => (e.target.style.backgroundColor = "#9395D3")}
@@ -123,6 +131,7 @@ const EditTodoForm = ({ todo, onCancel, onUpdate }) => {
               borderRadius: "15px",
               cursor: "pointer",
               transition: "background-color 0.3s",
+              boxShadow: "0px 4px 4px 0px #00000040",
             }}
             onMouseEnter={(e) => (e.target.style.backgroundColor = "#4c3bc0")}
             onMouseLeave={(e) => (e.target.style.backgroundColor = "#9395D3")}
@@ -132,6 +141,24 @@ const EditTodoForm = ({ todo, onCancel, onUpdate }) => {
           </button>
         </div>
       </div>
+      <style>
+        {`
+          input::placeholder {
+            color: #8B8787; /* Placeholder text color */
+          }
+
+          input:focus {
+            border: none; /* Prevent full border */
+            border-bottom: 3px solid #8B8787; /* Maintain consistent bottom border on focus */
+            outline: none; /* Remove browser focus outline */
+            color: black; /* Ensure text remains black */
+          }
+
+          input[type="date"]::-webkit-calendar-picker-indicator {
+            cursor: pointer; /* Make the date picker indicator clickable */
+          }
+        `}
+      </style>
     </>
   );
 };

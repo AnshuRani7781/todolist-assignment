@@ -1,8 +1,8 @@
-/* eslint-disable react/prop-types */
+// eslint-disable react/prop-types
 import { useState, useEffect, useCallback } from "react";
 import TodoItem from "./TodoItem";
 import FixedBottomBar from "./FixedBottomBar";
-import AddTodoForm from "./AddTodoForm"; // Import the form component
+import AddTodoForm from "./AddTodoForm";
 import { IoArrowBack } from "react-icons/io5";
 import { v4 as uuidv4 } from "uuid";
 import { useHeader } from "../HeaderContext";
@@ -10,74 +10,78 @@ import EditTodoForm from "./EditTodoForm";
 import CompletedTodos from "./CompletedTodos";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
-const TodoBody = ({ searchTerm, selectedDate }) => {
+import { useDateSearch } from "../DateSearchContext";
+import { FaArrowLeft } from "react-icons/fa";
+const TodoBody = () => {
   const [todos, setTodos] = useState([]);
-  const [filter, setFilter] = useState("all"); // 'all' or 'completed'
-  const [editTodo, setEditTodo] = useState(null); // State to store the todo to be edited
+  const [filter, setFilter] = useState("all");
+  const [editTodo, setEditTodo] = useState(null);
   const [currentView, setCurrentView] = useState("todoBody");
   const { setHeaderContent } = useHeader();
+  const { searchTerm, selectedDate, updateSearchTerm, updateSelectedDate } =
+    useDateSearch();
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 450); // Update isMobile state on resize
+    };
 
-  // Use useCallback to memoize `setHeaderContent`
+    handleResize(); // Initialize the value on mount
+    window.addEventListener("resize", handleResize); // Add event listener to handle resize
+
+    return () => {
+      window.removeEventListener("resize", handleResize); // Cleanup on unmount
+    };
+  }, []);
+  useEffect(() => {
+    updateSearchTerm("");
+    updateSelectedDate("");
+  }, [filter]);
   const updateHeader = useCallback(() => {
-    // Check the current view and filter state
     if (currentView === "todoBody") {
-      if (filter === "all") {
-        setHeaderContent({
-          heading: "TODO APP",
-          icon: null, // No icon for the "all" filter
-        });
-      } else if (filter === "completed") {
-        setHeaderContent({
-          heading: "Completed Tasks",
-          icon: null, // Optionally, you can set an icon here if needed
-        });
-      }
-    } else if (currentView === "addTodoForm") {
       setHeaderContent({
-        heading: "Add Task",
+        heading: filter === "all" ? "TODO APP" : "Completed Tasks",
+        icon: null,
+      });
+    } else {
+      const heading = currentView === "addTodoForm" ? "Add Task" : "Edit Task";
+      setHeaderContent({
+        heading,
         icon: (
-          <IoArrowBack
+          <FaArrowLeft
             style={{ cursor: "pointer" }}
-            onClick={() => setCurrentView("todoBody")} // Navigate back to the main view
+            onClick={() => setCurrentView("todoBody")}
           />
         ),
       });
-    } else if (currentView === "editTodoForm") {
-      setHeaderContent({
-        heading: "Edit Task",
-        icon: (
-          <IoArrowBack
-            style={{ cursor: "pointer" }}
-            onClick={() => setCurrentView("todoBody")} // Navigate back to the main view
-          />
-        ),
-      });
+      updateSearchTerm("");
+      updateSelectedDate("");
     }
   }, [currentView, filter, setHeaderContent]);
 
-  // Effect to update the header whenever the view changes
   useEffect(() => {
     updateHeader();
   }, [updateHeader]);
 
-  // Update the header content immutably
   const handleAddTodo = (newTodo) => {
-    const todoWithId = { ...newTodo, id: uuidv4(), completed: false }; // Add unique ID and completed status
+    const todoWithId = { ...newTodo, id: uuidv4(), completed: false };
     setTodos((prevTodos) => [...prevTodos, todoWithId]);
-    setCurrentView("todoBody"); // Go back to the main view
+    setCurrentView("todoBody");
   };
+
   const handleUpdateTodo = (updatedTodo) => {
     setTodos((prevTodos) =>
       prevTodos.map((todo) => (todo.id === updatedTodo.id ? updatedTodo : todo))
     );
-    setCurrentView("todoBody"); // Go back to the main view
+    setCurrentView("todoBody");
   };
 
   const handleEdit = (id) => {
     const todoToEdit = todos.find((todo) => todo.id === id);
-    setEditTodo(todoToEdit); // Set the todo item for editing
-    setCurrentView("editTodoForm"); // Switch to the edit view
+    setEditTodo(todoToEdit);
+    setCurrentView("editTodoForm");
   };
+
   const handleDelete = (id) => {
     setTodos(todos.filter((todo) => todo.id !== id));
   };
@@ -90,16 +94,19 @@ const TodoBody = ({ searchTerm, selectedDate }) => {
     );
   };
 
-  // Adjust filteredTodos logic
-  const filteredTodos = todos.filter((todo) => {
-    const matchesSearchTerm = todo.title
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const matchesDate = !selectedDate || todo.date === selectedDate;
-    return matchesSearchTerm && matchesDate;
-  });
+  // Filter todos by searchTerm and selectedDate
+  const filteredTodos =
+    searchTerm || selectedDate
+      ? todos.filter((todo) => {
+          const matchesSearchTerm = todo.title
+            .toLowerCase()
+            .startsWith(searchTerm.toLowerCase());
+          const matchesDate = !selectedDate || todo.date === selectedDate;
+          return matchesSearchTerm && matchesDate;
+        })
+      : todos;
 
-  const completedTodos = filteredTodos.filter((todo) => todo.completed);
+  const completedTodos = todos.filter((todo) => todo.completed);
   const activeTodos = filteredTodos.filter((todo) => !todo.completed);
 
   const todoBodyStyle = {
@@ -108,28 +115,26 @@ const TodoBody = ({ searchTerm, selectedDate }) => {
     padding: "10px",
     backgroundColor: "#D6D7EF",
     width: "100%",
-    marginLeft: "auto",
-    marginRight: "auto",
   };
 
   const addButtonStyle = {
     position: "fixed",
-    bottom: "20%",
+    bottom: isMobile ? "12%" : "20%",
     right: "8%",
-
     width: "65px",
     height: "65px",
     borderRadius: "50%",
-    backgroundColor: "#9395D3", // Brighter purple for visibility
+    backgroundColor: "#9395D3",
     color: "#FFFFFF",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+    boxShadow: "0px 4px 8px rgba(0, 0, 0, .4)",
     fontSize: "36px",
     cursor: "pointer",
     zIndex: 2,
   };
+
   if (currentView === "addTodoForm") {
     return (
       <AddTodoForm
@@ -138,6 +143,7 @@ const TodoBody = ({ searchTerm, selectedDate }) => {
       />
     );
   }
+
   if (currentView === "editTodoForm") {
     return (
       <EditTodoForm
@@ -147,6 +153,7 @@ const TodoBody = ({ searchTerm, selectedDate }) => {
       />
     );
   }
+
   if (filter === "completed") {
     return (
       <CompletedTodos
@@ -158,72 +165,80 @@ const TodoBody = ({ searchTerm, selectedDate }) => {
   }
 
   return (
-    <div style={todoBodyStyle}>
-      {activeTodos.length > 0 ? (
-        activeTodos.map((todo) => (
-          <TodoItem
-            date={todo.date}
-            key={todo.id}
-            title={todo.title}
-            detail={todo.detail}
-            subtitle={todo.subtitle}
-            completed={todo.completed} // Pass the actual completion status
-            onEdit={() => handleEdit(todo.id)}
-            onDelete={() => handleDelete(todo.id)}
-            onComplete={() => handleComplete(todo.id)} // Add complete handler
-          />
-        ))
-      ) : (
-        <p
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            textAlign: "center",
-            color: "black",
-            fontSize: "22px",
-            padding: "20px",
-            borderRadius: "8px",
-          }}
+    <>
+      <div style={todoBodyStyle}>
+        {activeTodos.length > 0 ? (
+          activeTodos.map((todo) => (
+            <TodoItem
+              key={todo.id}
+              title={todo.title}
+              detail={todo.detail}
+              date={todo.date}
+              subtitle={todo.subtitle}
+              completed={todo.completed}
+              onEdit={() => handleEdit(todo.id)}
+              onDelete={() => handleDelete(todo.id)}
+              onComplete={() => handleComplete(todo.id)}
+            />
+          ))
+        ) : searchTerm === "" && selectedDate === "" ? (
+          <p
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              textAlign: "center",
+              color: "black",
+              fontSize: isMobile ? "20px" : "24px",
+              padding: isMobile ? "10px" : "20px",
+              borderRadius: "8px",
+            }}
+          >
+            No tasks available.
+            <br />
+            Add a new task to{" "}
+            <span style={{ color: "#4A4C8D", fontWeight: "700" }}>
+              GET STARTED!
+            </span>
+          </p>
+        ) : (
+          <p
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              textAlign: "center",
+              color: "black",
+              fontSize: isMobile ? "10px" : "20px",
+              padding: isMobile ? "10px" : "20px",
+              borderRadius: "8px",
+            }}
+          >
+            No results found for{" "}
+            <span style={{ color: "#4A4C8D", fontWeight: "700" }}>
+              {searchTerm}{" "}
+            </span>{" "}
+            {searchTerm != "" && selectedDate != "" ? <span>& </span> : ""}
+            <span style={{ color: "#4A4C8D", fontWeight: "700" }}>
+              {selectedDate}
+            </span>
+          </p>
+        )}
+
+        <div
+          style={addButtonStyle}
+          onClick={() => setCurrentView("addTodoForm")}
+          data-tooltip-id="add"
+          data-tooltip-content="Add new task"
         >
-          No tasks available.
-          <br />
-          Add a new task to{" "}
-          <span style={{ color: "#FF6B6B", fontWeight: "700" }}>
-            GET STARTED !
-          </span>
-        </p>
-      )}
-
-      <FixedBottomBar filter={filter} setFilter={setFilter} />
-      {/* Floating Add Button */}
-      <div
-        style={addButtonStyle}
-        onClick={() => setCurrentView("addTodoForm")}
-        data-tooltip-id="add"
-        data-tooltip-content="add new task"
-      >
-        +
+          +
+        </div>
+        <ReactTooltip id="add" place="top" effect="solid" type="info" />
       </div>
-      <ReactTooltip
-        id="add"
-        place="top"
-        effect="solid"
-        type="info"
-        fontSize={"8px"}
-      />
-
-      {/* Show Add Todo Form */}
-      {/* {showForm && (
-        <AddTodoForm
-          onCancel={() => setShowForm(false)}
-          onSubmit={handleAddTodo}
-        />
-      )} */}
-      {/* Show Edit Todo Form */}
-      {editTodo && (() => setCurrentView("editTodoForm"))}
-    </div>
+      <FixedBottomBar filter={filter} setFilter={setFilter} />
+    </>
   );
 };
 

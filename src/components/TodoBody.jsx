@@ -1,26 +1,41 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // eslint-disable react/prop-types
 import { useState, useEffect, useCallback } from "react";
+import { v4 as uuidv4 } from "uuid";
+import { FaArrowLeft } from "react-icons/fa";
+import { Tooltip as ReactTooltip } from "react-tooltip";
+import "react-tooltip/dist/react-tooltip.css";
+
 import TodoItem from "./TodoItem";
 import FixedBottomBar from "./FixedBottomBar";
 import AddTodoForm from "./AddTodoForm";
-import { IoArrowBack } from "react-icons/io5";
-import { v4 as uuidv4 } from "uuid";
-import { useHeader } from "../HeaderContext";
 import EditTodoForm from "./EditTodoForm";
 import CompletedTodos from "./CompletedTodos";
-import { Tooltip as ReactTooltip } from "react-tooltip";
-import "react-tooltip/dist/react-tooltip.css";
+
+import { useHeader } from "../HeaderContext";
 import { useDateSearch } from "../DateSearchContext";
-import { FaArrowLeft } from "react-icons/fa";
+const LOCAL_STORAGE_KEY = "todoApp.todos";
 const TodoBody = () => {
-  const [todos, setTodos] = useState([]);
-  const [filter, setFilter] = useState("all");
-  const [editTodo, setEditTodo] = useState(null);
-  const [currentView, setCurrentView] = useState("todoBody");
-  const { setHeaderContent } = useHeader();
+  //state declaration
+  const [todos, setTodos] = useState(() => {
+    // Load todos from local storage if available
+    const savedTodos = localStorage.getItem(LOCAL_STORAGE_KEY);
+    return savedTodos ? JSON.parse(savedTodos) : [];
+  }); // store todos as a array
+  const [filter, setFilter] = useState("all"); // active or completed filter
+  const [editTodo, setEditTodo] = useState(null); // to toggle between edit todo page and active page
+  const [currentView, setCurrentView] = useState("todoBody"); //to toggle between views
+  const [isMobile, setIsMobile] = useState(false); // responsive view
+
+  const { setHeaderContent } = useHeader(); //header context
   const { searchTerm, selectedDate, updateSearchTerm, updateSelectedDate } =
-    useDateSearch();
-  const [isMobile, setIsMobile] = useState(false);
+    useDateSearch(); //data search context
+
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(todos));
+  }, [todos]);
+
+  // Handle window resize to determine mobile view
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 450); // Update isMobile state on resize
@@ -28,15 +43,18 @@ const TodoBody = () => {
 
     handleResize(); // Initialize the value on mount
     window.addEventListener("resize", handleResize); // Add event listener to handle resize
-
     return () => {
       window.removeEventListener("resize", handleResize); // Cleanup on unmount
     };
   }, []);
+
+  // Reset search term and selected date when filter changes
   useEffect(() => {
     updateSearchTerm("");
     updateSelectedDate("");
   }, [filter]);
+
+  // Update header content based on current view and filter
   const updateHeader = useCallback(() => {
     if (currentView === "todoBody") {
       setHeaderContent({
@@ -63,6 +81,7 @@ const TodoBody = () => {
     updateHeader();
   }, [updateHeader]);
 
+  //
   const handleAddTodo = (newTodo) => {
     const todoWithId = { ...newTodo, id: uuidv4(), completed: false };
     setTodos((prevTodos) => [...prevTodos, todoWithId]);
@@ -112,7 +131,7 @@ const TodoBody = () => {
   const todoBodyStyle = {
     flexGrow: 1,
     overflowY: "auto",
-    padding: "10px",
+    padding: "10px 15px",
     backgroundColor: "#D6D7EF",
     width: "100%",
   };

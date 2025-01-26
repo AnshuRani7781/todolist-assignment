@@ -3,10 +3,29 @@ import { Tooltip as ReactTooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
 import { FiSearch } from "react-icons/fi";
 import { SlCalender } from "react-icons/sl";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useHeader } from "../HeaderContext";
 import { useDateSearch } from "../DateSearchContext";
 const Header = () => {
+  const [screenSize, setScreenSize] = useState("large"); // Track screen size: 'small', 'medium', 'large'
+
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      if (width <= 400) {
+        setScreenSize("small");
+      } else if (width <= 1024) {
+        setScreenSize("medium");
+      } else {
+        setScreenSize("large");
+      }
+    };
+
+    handleResize(); // Initialize screen size on mount
+    window.addEventListener("resize", handleResize); // Listen for resize events
+    return () => window.removeEventListener("resize", handleResize); // Cleanup
+  }, []);
+
   const { searchTerm, selectedDate, updateSearchTerm, updateSelectedDate } =
     useDateSearch();
   const [calendarVisible, setCalendarVisible] = useState(false); // Toggle calendar visibility
@@ -33,29 +52,51 @@ const Header = () => {
 
   const iconContainerStyle = {
     display: "flex",
-    alignItems: "flex-end",
-    gap: "25px",
-    justifyContent: "center",
+    alignItems: "center",
+    gap:
+      screenSize === "small"
+        ? "15px"
+        : screenSize === "medium"
+        ? "20px"
+        : "25px",
+    justifyContent: screenSize === "small" ? "flex-end" : "center",
+    flexWrap: "wrap",
   };
   const iconStyle1 = {
-    fontSize: "22px",
+    fontSize:
+      screenSize === "small"
+        ? "18px"
+        : screenSize === "medium"
+        ? "20px"
+        : "28px",
     cursor: "pointer",
     paddingRight: "15px",
   };
   const iconStyle = {
-    fontSize: "30px",
+    fontSize:
+      screenSize === "small"
+        ? "20px"
+        : screenSize === "medium"
+        ? "25px"
+        : "30px",
     cursor: "pointer",
     paddingRight: "0px",
   };
 
   const searchInputStyle = {
     transition: "width 0.3s ease, opacity 0.3s ease",
-    width: "8rem", // Animation width change
+    width:
+      screenSize === "small"
+        ? "6rem"
+        : screenSize === "medium"
+        ? "7rem"
+        : "8rem", // Animation width change
     opacity: 1, // Fade in/out animation
     padding: "5px",
     marginLeft: "0px",
     // border: "1px solid #ccc",
     borderRadius: "5px",
+    border: "none",
   };
   const formatDate = (dateString) => {
     const [day, month, year] = dateString.split("/");
@@ -83,13 +124,33 @@ const Header = () => {
           effect="solid"
           type="info"
         />
-        <h1 style={{ fontSize: "24px" }}>{headerContent.heading}</h1>
+        <h1
+          style={{
+            fontSize:
+              screenSize === "small"
+                ? "18px"
+                : screenSize === "medium"
+                ? "24px"
+                : "26px",
+          }}
+        >
+          {headerContent.heading}
+        </h1>
       </div>
       {(headerContent.heading === "TODO APP" ||
         headerContent.heading === "Completed Tasks") && (
         <div style={iconContainerStyle}>
           <div
-            style={{ display: "flex", alignItems: "flex-start", gap: ".75rem" }}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap:
+                screenSize === "small"
+                  ? ".55rem"
+                  : screenSize === "medium"
+                  ? ".65rem"
+                  : ".75rem",
+            }}
           >
             <FiSearch
               style={iconStyle}
@@ -104,12 +165,21 @@ const Header = () => {
                 placeholder="Search by title"
                 value={searchTerm}
                 onChange={(e) => updateSearchTerm(e.target.value)} // Update search term
-                onFocus={{ border: "none" }}
+                onFocus={{ border: "none !important" }}
               />
             )}
           </div>
           <div
-            style={{ display: "flex", alignItems: "flex-start", gap: ".75rem" }}
+            style={{
+              display: "flex",
+              alignItems: "flex-end",
+              gap:
+                screenSize === "small"
+                  ? ".55rem"
+                  : screenSize === "medium"
+                  ? ".65rem"
+                  : ".75rem",
+            }}
           >
             <ReactTooltip
               id="search"
@@ -132,7 +202,12 @@ const Header = () => {
                 onFocus={{ border: "none !important" }}
                 style={{
                   transition: "width 0.3s ease, opacity 0.3s ease",
-                  width: "8rem", // Animation width change
+                  width:
+                    screenSize === "small"
+                      ? "6rem"
+                      : screenSize === "medium"
+                      ? "7rem"
+                      : "8rem", // Animation width change
                   opacity: 1, // Fade in/out animation
                   padding: "5px",
                   marginLeft: "0px",

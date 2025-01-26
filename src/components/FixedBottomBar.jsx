@@ -55,8 +55,7 @@ const FixedBottomBar = ({ filter, setFilter }) => {
     padding: `${styleConfig.padding}px 12px`, // Dynamic padding
     backgroundColor: "white",
     zIndex: 1,
-    position: "fixed",
-    bottom: 0,
+    boxShadow: "0px -4px 8px rgba(0, 0, 0, 0.25)",
   };
 
   const iconContainerStyle = (isActive) => ({

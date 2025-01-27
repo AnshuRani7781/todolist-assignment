@@ -200,12 +200,10 @@ const Header = () => {
               type="info"
             />
             <SlCalender
-              style={{ ...iconStyle, transition: "transform 0.2s ease-in-out" }}
-              onMouseEnter={(e) => {
-                e.target.style.transform = "scale(1.2)"; // Scale up to 1.2x on hover
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.transform = "scale(1)"; // Reset scale on hover out
+              style={{
+                ...iconStyle,
+                paddingRight: "2px",
+                transition: "transform 0.2s ease-in-out",
               }}
               onClick={() => setCalendarVisible(!calendarVisible)}
               data-tooltip-id="search"

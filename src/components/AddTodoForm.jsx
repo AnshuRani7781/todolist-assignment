@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDateSearch } from "../DateSearchContext";
+import { Tooltip as ReactTooltip } from "react-tooltip";
+import "react-tooltip/dist/react-tooltip.css";
 const AddTodoForm = ({ onCancel, onSubmit }) => {
   const { searchTerm, selectedDate, updateSearchTerm, updateSelectedDate } =
     useDateSearch();
@@ -171,9 +173,21 @@ const AddTodoForm = ({ onCancel, onSubmit }) => {
             isValid && (e.target.style.backgroundColor = "#4A4C8D")
           }
           disabled={!isValid} // Disable button if form is not valid
+          data-tooltip-id="disable-button"
+          data-tooltip-content={
+            !isValid
+              ? "Please fill out all fields to enable the button."
+              : "Click to add the task"
+          }
         >
           ADD
         </button>
+        <ReactTooltip
+          id="disable-button"
+          place="bottom"
+          effect="solid"
+          type="info"
+        />
       </form>
       <style>
         {`

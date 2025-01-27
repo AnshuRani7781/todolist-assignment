@@ -59,7 +59,7 @@ const Header = () => {
         : screenSize === "medium"
         ? "20px"
         : "25px",
-    justifyContent: screenSize === "small" ? "flex-end" : "center",
+    justifyContent: window.innerWidth <= 500 ? "flex-end" : "center",
     flexWrap: "wrap",
   };
   const iconStyle1 = {

@@ -34,19 +34,19 @@ const CompletedTodos = ({ todos, filter, setFilter }) => {
           backgroundColor: "#D6D7EF",
         }}
       >
-        {filteredTodos.length >0?(
-            filteredTodos.map((todo) => (
-              <TodoItem
-                key={todo.id}
-                date={todo.date}
-                title={todo.title}
-                subtitle={todo.subtitle}
-                completed={todo.completed}
-                // No handlers for edit/delete here unless needed
-              />
-            ))
-          ):
-        searchTerm === "" && selectedDate === "" ? (
+        {filteredTodos.length > 0 ? (
+          filteredTodos.map((todo) => (
+            <TodoItem
+              key={todo.id}
+              date={todo.date}
+              detail={todo.detail}
+              title={todo.title}
+              subtitle={todo.subtitle}
+              completed={todo.completed}
+              // No handlers for edit/delete here unless needed
+            />
+          ))
+        ) : searchTerm === "" && selectedDate === "" ? (
           <p
             style={{
               position: "absolute",
@@ -68,7 +68,7 @@ const CompletedTodos = ({ todos, filter, setFilter }) => {
             </span>
           </p>
         ) : (
-          (<p
+          <p
             style={{
               position: "absolute",
               top: "50%",
@@ -89,7 +89,7 @@ const CompletedTodos = ({ todos, filter, setFilter }) => {
             <span style={{ color: "#4A4C8D", fontWeight: "700" }}>
               {selectedDate}
             </span>
-          </p>)
+          </p>
         )}
       </div>
       <FixedBottomBar filter={filter} setFilter={setFilter} />

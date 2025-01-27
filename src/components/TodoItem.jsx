@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+/* eslint-disable react/prop-types */
+import { useState, useEffect, } from "react";
 import { FiEdit2 } from "react-icons/fi";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { BiCheckCircle } from "react-icons/bi";
@@ -40,7 +41,7 @@ const TodoItem = ({
     display: "flex",
     flexDirection: screenSize === "small" ? "column" : "row",
     justifyContent: "space-between",
-    alignItems: screenSize === "small" ? "flexStart" : "center",
+    alignItems: screenSize === "small" ? "flex-start" : "center",
     padding:
       screenSize === "small"
         ? "15px"

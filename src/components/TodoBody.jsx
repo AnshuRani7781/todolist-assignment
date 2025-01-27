@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 // eslint-disable react/prop-types
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { FaArrowLeft } from "react-icons/fa";
 import { Tooltip as ReactTooltip } from "react-tooltip";
@@ -14,9 +14,11 @@ import CompletedTodos from "./CompletedTodos";
 
 import { useHeader } from "../HeaderContext";
 import { useDateSearch } from "../DateSearchContext";
+
 const LOCAL_STORAGE_KEY = "todoApp.todos";
 const TodoBody = () => {
   //state declaration
+  const ref = useRef(null);
   const [todos, setTodos] = useState(() => {
     // Load todos from local storage if available
     const savedTodos = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -185,7 +187,7 @@ const TodoBody = () => {
 
   return (
     <>
-      <div style={todoBodyStyle}>
+      <div ref={ref} style={todoBodyStyle}>
         {activeTodos.length > 0 ? (
           activeTodos.map((todo) => (
             <TodoItem
@@ -254,6 +256,7 @@ const TodoBody = () => {
         >
           +
         </div>
+
         <ReactTooltip id="add" place="top" effect="solid" type="info" />
       </div>
       <FixedBottomBar filter={filter} setFilter={setFilter} />

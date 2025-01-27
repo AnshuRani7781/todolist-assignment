@@ -115,7 +115,7 @@ const EditTodoForm = ({ todo, onCancel, onUpdate }) => {
             }}
             onMouseEnter={(e) =>
               title && detail && date
-                ? (e.target.style.backgroundColor = "#4c3bc0")
+                ? (e.target.style.backgroundColor = "#4A4C8D")
                 : null
             }
             onMouseLeave={(e) =>
@@ -150,7 +150,7 @@ const EditTodoForm = ({ todo, onCancel, onUpdate }) => {
               transition: "background-color 0.3s",
               boxShadow: "0px 4px 4px 0px #00000040",
             }}
-            onMouseEnter={(e) => (e.target.style.backgroundColor = "#4c3bc0")}
+            onMouseEnter={(e) => (e.target.style.backgroundColor = "#4A4C8D")}
             onMouseLeave={(e) => (e.target.style.backgroundColor = "#9395D3")}
             onClick={onCancel}
           >

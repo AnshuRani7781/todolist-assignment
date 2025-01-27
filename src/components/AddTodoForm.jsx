@@ -170,7 +170,7 @@ const AddTodoForm = ({ onCancel, onSubmit }) => {
             isValid && (e.target.style.backgroundColor = "#4A4C8D")
           }
           onMouseLeave={(e) =>
-            isValid && (e.target.style.backgroundColor = "#4A4C8D")
+            isValid && (e.target.style.backgroundColor = "#9395D3")
           }
           disabled={!isValid} // Disable button if form is not valid
           data-tooltip-id="disable-button"

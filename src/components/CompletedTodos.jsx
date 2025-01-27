@@ -13,6 +13,7 @@ const CompletedTodos = ({ todos, filter, setFilter }) => {
       icon: null,
     });
   }, [setHeaderContent]);
+
   const filteredTodos =
     searchTerm || selectedDate
       ? todos.filter((todo) => {
@@ -64,7 +65,7 @@ const CompletedTodos = ({ todos, filter, setFilter }) => {
             <br />
             Stay motivated and finish your{" "}
             <span style={{ color: "#4A4C8D", fontWeight: "700" }}>
-              first one !
+              first one!
             </span>
           </p>
         ) : (

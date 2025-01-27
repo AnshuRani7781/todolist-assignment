@@ -110,7 +110,13 @@ const TodoBody = () => {
   const handleComplete = (id) => {
     setTodos((prevTodos) =>
       prevTodos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+        todo.id === id
+          ? {
+              ...todo,
+              completed: !todo.completed,
+              completedAt: !todo.completed ? new Date().toISOString() : null,
+            }
+          : todo
       )
     );
   };
@@ -128,7 +134,9 @@ const TodoBody = () => {
       : todos;
 
   const completedTodos = todos.filter((todo) => todo.completed);
-  const activeTodos = filteredTodos.filter((todo) => !todo.completed);
+  const activeTodos = filteredTodos
+    .filter((todo) => !todo.completed)
+    .sort((a, b) => new Date(a.completedAt) - new Date(b.completedAt));
 
   const todoBodyStyle = {
     flexGrow: 1,

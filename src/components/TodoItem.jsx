@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useState, useEffect, } from "react";
+import { useState, useEffect } from "react";
 import { FiEdit2 } from "react-icons/fi";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { BiCheckCircle } from "react-icons/bi";
@@ -114,7 +114,16 @@ const TodoItem = ({
       <div style={{ display: "flex", gap: "10px" }}>
         {detail.length > subtitle.length && (
           <button
-            style={buttonStyle}
+            style={{
+              ...buttonStyle,
+              transition: " transform 0.2s ease-in-out",
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = "scale(1.1)"; // Scale up to 1.2x on hover
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = "scale(1)"; // Reset scale on hover out
+            }}
             onClick={() => setShowDetail((prev) => !prev)}
             aria-label="Toggle details"
             title="Toggle details"
@@ -129,7 +138,16 @@ const TodoItem = ({
         {!completed && (
           <>
             <button
-              style={buttonStyle}
+              style={{
+                ...buttonStyle,
+                transition: " transform 0.2s ease-in-out",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "scale(1.1)"; // Scale up to 1.2x on hover
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "scale(1)"; // Reset scale on hover out
+              }}
               onClick={onComplete}
               aria-label="Mark as complete"
               title="Mark as complete"
@@ -137,7 +155,16 @@ const TodoItem = ({
               <BiCheckCircle />
             </button>
             <button
-              style={buttonStyle}
+              style={{
+                ...buttonStyle,
+                transition: " transform 0.2s ease-in-out",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "scale(1.1)"; // Scale up to 1.2x on hover
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "scale(1)"; // Reset scale on hover out
+              }}
               onClick={onEdit}
               aria-label="Edit task"
               title="Edit task"
@@ -145,7 +172,16 @@ const TodoItem = ({
               <FiEdit2 />
             </button>
             <button
-              style={buttonStyle}
+              style={{
+                ...buttonStyle,
+                transition: " transform 0.2s ease-in-out",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "scale(1.1)"; // Scale up to 1.2x on hover
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "scale(1)"; // Reset scale on hover out
+              }}
               onClick={onDelete}
               aria-label="Delete task"
               title="Delete task"

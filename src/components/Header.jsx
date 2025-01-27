@@ -110,8 +110,14 @@ const Header = () => {
       <div style={titleStyle}>
         {headerContent.icon && (
           <span
-            style={iconStyle1}
+            style={{ ...iconStyle1, transition: "transform 0.2s ease-in-out" }}
             onClick={() => {}}
+            onMouseEnter={(e) => {
+              e.target.style.transform = "scale(1.2)"; // Scale up to 1.2x on hover
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = "scale(1)"; // Reset scale on hover out
+            }}
             data-tooltip-id="back-to-active"
             data-tooltip-content="back"
           >
@@ -153,8 +159,14 @@ const Header = () => {
             }}
           >
             <FiSearch
-              style={iconStyle}
+              style={{ ...iconStyle, transition: "transform 0.2s ease-in-out" }}
               onClick={() => setSearchVisible(!searchVisible)}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "scale(1.2)"; // Scale up to 1.2x on hover
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "scale(1)"; // Reset scale on hover out
+              }}
               data-tooltip-id="search"
               data-tooltip-content="search by title"
             />
@@ -188,7 +200,13 @@ const Header = () => {
               type="info"
             />
             <SlCalender
-              style={iconStyle}
+              style={{ ...iconStyle, transition: "transform 0.2s ease-in-out" }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = "scale(1.2)"; // Scale up to 1.2x on hover
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "scale(1)"; // Reset scale on hover out
+              }}
               onClick={() => setCalendarVisible(!calendarVisible)}
               data-tooltip-id="search"
               data-tooltip-content="search by date"

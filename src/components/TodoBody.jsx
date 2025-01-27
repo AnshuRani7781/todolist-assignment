@@ -268,7 +268,16 @@ const TodoBody = () => {
         )}
 
         <div
-          style={addButtonStyle}
+          style={{
+            ...addButtonStyle,
+            transition: " transform 0.2s ease-in-out",
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.transform = "scale(1.1)"; // Scale up to 1.2x on hover
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.transform = "scale(1)"; // Reset scale on hover out
+          }}
           onClick={() => setCurrentView("addTodoForm")}
           data-tooltip-id="add"
           data-tooltip-content="Add new task"

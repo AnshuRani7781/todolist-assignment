@@ -14,16 +14,25 @@ const CompletedTodos = ({ todos, filter, setFilter }) => {
     });
   }, [setHeaderContent]);
 
-  const filteredTodos =
-    searchTerm || selectedDate
-      ? todos.filter((todo) => {
-          const matchesSearchTerm = todo.title
-            .toLowerCase()
-            .startsWith(searchTerm.toLowerCase());
+  searchTerm.trim() || selectedDate
+    ? todos
+        .filter((todo) => {
+          const matchesSearchTerm = searchTerm
+            ? todo.title.toLowerCase().includes(searchTerm.trim().toLowerCase())
+            : true;
           const matchesDate = !selectedDate || todo.date === selectedDate;
           return matchesSearchTerm && matchesDate;
         })
-      : todos;
+        .sort((a, b) => {
+          const indexA = a.title
+            .toLowerCase()
+            .indexOf(searchTerm.toLowerCase());
+          const indexB = b.title
+            .toLowerCase()
+            .indexOf(searchTerm.toLowerCase());
+          return indexA - indexB; // Sort by the index of the substring
+        })
+    : todos.sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
   return (
     <>
       <div

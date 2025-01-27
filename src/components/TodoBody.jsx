@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { FaArrowLeft } from "react-icons/fa";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
-
+import { motion } from "framer-motion";
 import TodoItem from "./TodoItem";
 import FixedBottomBar from "./FixedBottomBar";
 import AddTodoForm from "./AddTodoForm";
@@ -18,7 +18,7 @@ import { useDateSearch } from "../DateSearchContext";
 const LOCAL_STORAGE_KEY = "todoApp.todos";
 const TodoBody = () => {
   //state declaration
-  const ref = useRef(null);
+
   const [todos, setTodos] = useState(() => {
     // Load todos from local storage if available
     const savedTodos = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -123,20 +123,30 @@ const TodoBody = () => {
 
   // Filter todos by searchTerm and selectedDate
   const filteredTodos =
-    searchTerm || selectedDate
-      ? todos.filter((todo) => {
-          const matchesSearchTerm = todo.title
-            .toLowerCase()
-            .startsWith(searchTerm.toLowerCase());
-          const matchesDate = !selectedDate || todo.date === selectedDate;
-          return matchesSearchTerm && matchesDate;
-        })
+    searchTerm.trim() || selectedDate
+      ? todos
+          .filter((todo) => {
+            const matchesSearchTerm = searchTerm
+              ? todo.title
+                  .toLowerCase()
+                  .includes(searchTerm.trim().toLowerCase())
+              : true;
+            const matchesDate = !selectedDate || todo.date === selectedDate;
+            return matchesSearchTerm && matchesDate;
+          })
+          .sort((a, b) => {
+            const indexA = a.title
+              .toLowerCase()
+              .indexOf(searchTerm.toLowerCase());
+            const indexB = b.title
+              .toLowerCase()
+              .indexOf(searchTerm.toLowerCase());
+            return indexA - indexB; // Sort by the index of the substring
+          })
       : todos;
 
   const completedTodos = todos.filter((todo) => todo.completed);
-  const activeTodos = filteredTodos
-    .filter((todo) => !todo.completed)
-    .sort((a, b) => new Date(a.completedAt) - new Date(b.completedAt));
+  const activeTodos = filteredTodos.filter((todo) => !todo.completed);
 
   const todoBodyStyle = {
     flexGrow: 1,
@@ -147,7 +157,8 @@ const TodoBody = () => {
   };
 
   const addButtonStyle = {
-    position: "fixed",
+    position: "absolute",
+    // position: "fixed",
     bottom: isMobile ? "12%" : "20%",
     right: "8%",
     width: "65px",
@@ -195,7 +206,7 @@ const TodoBody = () => {
 
   return (
     <>
-      <div ref={ref} style={todoBodyStyle}>
+      <div style={todoBodyStyle}>
         {activeTodos.length > 0 ? (
           activeTodos.map((todo) => (
             <TodoItem

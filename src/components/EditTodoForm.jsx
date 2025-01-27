@@ -1,8 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
-import { SlCalender } from "react-icons/sl";
 import { useHeader } from "../HeaderContext";
-import { IoArrowBack } from "react-icons/io5";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
 const EditTodoForm = ({ todo, onCancel, onUpdate }) => {
@@ -43,7 +41,7 @@ const EditTodoForm = ({ todo, onCancel, onUpdate }) => {
           name="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Title"
+          placeholder="Title *"
           style={{
             color: "black",
             width: "100%",
@@ -60,7 +58,7 @@ const EditTodoForm = ({ todo, onCancel, onUpdate }) => {
           type="text"
           id="detail"
           name="detail"
-          placeholder="Details"
+          placeholder="Detail *"
           value={detail}
           onChange={(e) => setDetail(e.target.value)}
           style={{
@@ -74,7 +72,7 @@ const EditTodoForm = ({ todo, onCancel, onUpdate }) => {
           }}
         />
         <input
-          placeholder={date}
+          placeholder={date ? date : "Date"}
           type="text"
           name="date"
           color="black"

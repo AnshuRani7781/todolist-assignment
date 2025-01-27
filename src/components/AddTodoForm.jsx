@@ -15,7 +15,7 @@ const AddTodoForm = ({ onCancel, onSubmit }) => {
     subtitle: "",
     date: "",
   });
-
+  console.log(formData.date);
   const [isValid, setIsValid] = useState(false); // Track form validity
 
   const handleChange = (e) => {
@@ -26,8 +26,13 @@ const AddTodoForm = ({ onCancel, onSubmit }) => {
       const trimmedValue = value.trimStart().slice(0, 35);
       setFormData({ ...formData, [name]: trimmedValue });
     } else if (name === "date") {
-      const [year, month, day] = value.split("-");
-      setFormData({ ...formData, [name]: `${day}/${month}/${year}` });
+      if (value) {
+        const [year, month, day] = value.split("-");
+        setFormData({ ...formData, [name]: `${day}/${month}/${year}` });
+      } else {
+        // Clear date value if input is empty
+        setFormData({ ...formData, [name]: "" });
+      }
     } else if (name === "detail") {
       setFormData({
         ...formData,
@@ -41,6 +46,7 @@ const AddTodoForm = ({ onCancel, onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!isValid) return;
 
     if (onSubmit) {
       onSubmit(formData);
@@ -57,10 +63,15 @@ const AddTodoForm = ({ onCancel, onSubmit }) => {
       setIsValid(false);
     }
   };
-
   useEffect(() => {
-    checkFormValidity();
-  }, [formData.title, formData.detail, formData.date]);
+    const { title, detail, date } = formData;
+
+    setIsValid(Boolean(title && detail && date));
+  }, [formData]);
+
+  // useEffect(() => {
+  //   checkFormValidity();
+  // }, [formData.title, formData.detail, formData.date]);
 
   return (
     <div
@@ -79,7 +90,7 @@ const AddTodoForm = ({ onCancel, onSubmit }) => {
           name="title"
           value={formData.title}
           onChange={handleChange}
-          placeholder="Title (max 35 characters)"
+          placeholder="Title (max 35 characters) *"
           maxLength="35"
           style={{
             color: "black",
@@ -108,7 +119,7 @@ const AddTodoForm = ({ onCancel, onSubmit }) => {
           type="text"
           id="detail"
           name="detail"
-          placeholder="Details"
+          placeholder="Detail *"
           value={formData.detail}
           onChange={handleChange}
           style={{
@@ -117,7 +128,6 @@ const AddTodoForm = ({ onCancel, onSubmit }) => {
             width: "100%",
             border: "none",
             borderBottom: "1px solid #8B8787",
-
             fontSize: "16px",
             marginBottom: "30px",
           }}
@@ -126,15 +136,18 @@ const AddTodoForm = ({ onCancel, onSubmit }) => {
 
         {/* Date Field */}
         <input
-          placeholder="Date"
-          className="textbox-n"
-          type="text"
           name="date"
+          placeholder="Date *"
+          type="text"
           onFocus={(e) => {
             e.target.type = "date";
             e.target.style.color = "black";
           }}
-          onBlur={(e) => (e.target.type = "text")}
+          onBlur={(e) => {
+            console.log(formData.date);
+            if (!formData.date || formData.date === undefined)
+              e.target.type = "text";
+          }}
           id="date"
           onChange={handleChange}
           style={{
@@ -159,7 +172,10 @@ const AddTodoForm = ({ onCancel, onSubmit }) => {
             fontSize: "16px",
             fontWeight: "bold",
             color: "#fff",
-            backgroundColor: isValid ? "#9395D3" : "#D3D3D3",
+            backgroundColor:
+              formData.title && formData.detail && formData.date
+                ? "#9395D3"
+                : "#d3d3d3", // Change color based on enabled/disabled
             border: "none",
             borderRadius: "15px",
             cursor: isValid ? "pointer" : "not-allowed",
@@ -172,10 +188,10 @@ const AddTodoForm = ({ onCancel, onSubmit }) => {
           onMouseLeave={(e) =>
             isValid && (e.target.style.backgroundColor = "#9395D3")
           }
-          disabled={!isValid} // Disable button if form is not valid
+          disabled={!formData.title || !formData.detail || !formData.date} // Disable button if form is not valid
           data-tooltip-id="disable-button"
           data-tooltip-content={
-            !isValid
+            !formData.title || !formData.detail || !formData.date
               ? "Please fill out all fields to enable the button."
               : "Click to add the task"
           }

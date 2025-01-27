@@ -72,7 +72,8 @@ const EditTodoForm = ({ todo, onCancel, onUpdate }) => {
           }}
         />
         <input
-          placeholder={date ? date : "Date"}
+          value={date}
+          placeholder={date ? date : "Date *"}
           type="text"
           name="date"
           color="black"
@@ -80,7 +81,9 @@ const EditTodoForm = ({ todo, onCancel, onUpdate }) => {
             e.target.type = "date";
             e.target.style.color = "black";
           }}
-          onBlur={(e) => (e.target.type = "text")}
+          onBlur={(e) => {
+            if (!date || date === undefined) e.target.type = "text";
+          }}
           id="date "
           onChange={(e) => setDate(e.target.value)}
           style={{

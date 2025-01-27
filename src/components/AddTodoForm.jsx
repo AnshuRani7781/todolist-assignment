@@ -15,7 +15,7 @@ const AddTodoForm = ({ onCancel, onSubmit }) => {
     subtitle: "",
     date: "",
   });
-  console.log(formData.date);
+  //console.log(formData.date);
   const [isValid, setIsValid] = useState(false); // Track form validity
 
   const handleChange = (e) => {
@@ -144,7 +144,7 @@ const AddTodoForm = ({ onCancel, onSubmit }) => {
             e.target.style.color = "black";
           }}
           onBlur={(e) => {
-            console.log(formData.date);
+          //  console.log(formData.date);
             if (!formData.date || formData.date === undefined)
               e.target.type = "text";
           }}

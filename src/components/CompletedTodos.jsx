@@ -1,18 +1,24 @@
 /* eslint-disable react/prop-types */
 import { useEffect } from "react";
+
 import TodoItem from "./TodoItem";
 import FixedBottomBar from "./FixedBottomBar";
+
 import { useHeader } from "../HeaderContext";
 import { useDateSearch } from "../DateSearchContext";
+
 const CompletedTodos = ({ todos, filter, setFilter }) => {
+
   const { setHeaderContent } = useHeader();
   const { searchTerm, selectedDate } = useDateSearch();
+
   useEffect(() => {
     setHeaderContent({
       heading: "Completed Tasks",
       icon: null,
     });
   }, [setHeaderContent]);
+
   const filteredTodos =
     searchTerm.trim() || selectedDate
       ? todos
@@ -35,6 +41,7 @@ const CompletedTodos = ({ todos, filter, setFilter }) => {
             return indexA - indexB; // Sort by the index of the substring
           })
       : todos.sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
+  
   return (
     <>
       <div
@@ -46,6 +53,7 @@ const CompletedTodos = ({ todos, filter, setFilter }) => {
           backgroundColor: "#D6D7EF",
         }}
       >
+
         {filteredTodos.length > 0 ? (
           filteredTodos.map((todo) => (
             <TodoItem
@@ -71,15 +79,17 @@ const CompletedTodos = ({ todos, filter, setFilter }) => {
               padding: "20px",
               borderRadius: "8px",
             }}
-          >
-            No tasks completed yet.
-            <br />
-            Stay motivated and finish your{" "}
-            <span style={{ color: "#4A4C8D", fontWeight: "700" }}>
-              first one!
-            </span>
+            >
+              
+              No tasks completed yet.
+              <br />
+              Stay motivated and finish your{" "}
+              <span style={{ color: "#4A4C8D", fontWeight: "700" }}>
+              FIRST ONE!
+              </span>
           </p>
-        ) : (
+          ) : (
+              
           <p
             style={{
               position: "absolute",
@@ -91,7 +101,8 @@ const CompletedTodos = ({ todos, filter, setFilter }) => {
               fontSize: "22px",
               padding: "20px",
               borderRadius: "8px",
-            }}
+                }}
+                
           >
             No results found for{" "}
             <span style={{ color: "#4A4C8D", fontWeight: "700" }}>

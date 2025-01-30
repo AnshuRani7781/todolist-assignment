@@ -40,7 +40,10 @@ const CompletedTodos = ({ todos, filter, setFilter }) => {
               .indexOf(searchTerm.toLowerCase());
             return indexA - indexB; // Sort by the index of the substring
           })
-      : todos.sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
+      : todos.sort((a, b) => 
+    new Date(b.completedAt || 0) - new Date(a.completedAt || 0)
+);
+
   
   return (
     <>
